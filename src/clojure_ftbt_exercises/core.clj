@@ -31,7 +31,9 @@ Yep, always % will be the external params."
   [[& a]]
   (set (map inc a)))
 
-"Now is the truth time."
+"Now is the truth time. Let's try all at same time.
+At first, I had defined a vector with asymmetrical
+alien body parts in hash-maps."
 (def asym-alien-body-parts [{:name "head" :size 3}
                             {:name "first-eye" :size 1}
                             {:name "first-ear" :size 1}
@@ -39,6 +41,39 @@ Yep, always % will be the external params."
                             {:name "neck" :size 2}
                             {:name "first-shoulder" :size 3}
                             {:name "first-upper-arm" :size 3}
-                            {:name "" :size }
-                            
-                            
+                            {:name "chest" :size 10}
+                            {:name "back" :size 10}
+                            {:name "first-forearm" :size 3}
+                            {:name "abdomen" :size 6}
+                            {:name "first-kidney" :size 1}
+                            {:name "first-hand" :size 2}
+                            {:name "first-knee" :size 2}
+                            {:name "first-thigh" :size 4}
+                            {:name "first-lower-leg" :size 3}
+                            {:name "first-achilles" :size 1}
+                            {:name "first-foot" :size 2}])
+"This function creates the another alien parts"                            
+(defn matching-part
+  [part n]
+  (if (clojure.string/includes? #"^first-" part) {:name (clojure.string/replace (:name part) #"^first-" (str n "th-"))
+  :size (:size part)} nil))
+(defn symmetrize-body-parts
+  [asym-body-parts]
+  (loop [remaining-asym-parts asym-body-parts final-body-parts[]]
+    (if (empty? remaining-asym-parts)
+      final-body-parts
+      (let [[part & remaining] remaining-asym-parts]
+        (recur remaining
+               (into final-body-parts
+                     (loop [n 2 set-of-parts []]
+                       (println set-of-parts)
+                       (if (> n 5)
+                         set-of-parts
+                         (recur (inc n) (into set-of-parts (set [part (matching-part part n)]))))
+                     )
+               )
+        )
+      )
+    )
+  )
+)
