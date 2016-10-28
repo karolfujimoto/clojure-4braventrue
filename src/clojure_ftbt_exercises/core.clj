@@ -30,46 +30,58 @@ Yep, always % will be the external params."
 (defn c4-4
   [[& a]]
   (set (map inc a)))
-
 "Now is the truth time. Let's try all at same time.
 At first, I had defined a vector with asymmetrical
 alien body parts in hash-maps."
 (def asym-alien-body-parts [{:name "head" :size 3}
-                            {:name "first-eye" :size 1}
-                            {:name "first-ear" :size 1}
+                            {:name "1st-eye" :size 1}
+                            {:name "1st-ear" :size 1}
                             {:name "mouth" :size 1}
                             {:name "neck" :size 2}
-                            {:name "first-shoulder" :size 3}
-                            {:name "first-upper-arm" :size 3}
+                            {:name "1st-shoulder" :size 3}
+                            {:name "1st-upper-arm" :size 3}
                             {:name "chest" :size 10}
                             {:name "back" :size 10}
-                            {:name "first-forearm" :size 3}
+                            {:name "1st-forearm" :size 3}
                             {:name "abdomen" :size 6}
-                            {:name "first-kidney" :size 1}
-                            {:name "first-hand" :size 2}
-                            {:name "first-knee" :size 2}
-                            {:name "first-thigh" :size 4}
-                            {:name "first-lower-leg" :size 3}
-                            {:name "first-achilles" :size 1}
-                            {:name "first-foot" :size 2}])
+                            {:name "1st-kidney" :size 1}
+                            {:name "1st-hand" :size 2}
+                            {:name "1st-knee" :size 2}
+                            {:name "1st-thigh" :size 4}
+                            {:name "1st-lower-leg" :size 3}
+                            {:name "1st-achilles" :size 1}
+                            {:name "1st-foot" :size 2}])
 "This function creates the another alien parts"                            
 (defn matching-part
   [part n]
-  (if (clojure.string/includes? #"^first-" part) {:name (clojure.string/replace (:name part) #"^first-" (str n "th-"))
-  :size (:size part)} nil))
+  {:name (clojure.string/replace (:name part) #"^1st-"
+    (case n
+      2 "2nd-"  
+      3 "3rd-"
+      (str n "th-")
+    )
+   ) :size (:size part)}
+)
+":o I did it! So, let's explain. The loop receives the body-parts
+'asym-body-parts' and throw it in remaining-asym-parts.
+The final-body-parts will be composed by the 2nd parameter of recur
+by into function.
+(let [[part & remaining] remaining-asym-parts] ...) gets the first
+item to symmetrize the part and remaining will be throwed to
+remaining-body-parts."
 (defn symmetrize-body-parts
   [asym-body-parts]
   (loop [remaining-asym-parts asym-body-parts final-body-parts[]]
     (if (empty? remaining-asym-parts)
-      final-body-parts
+      (set final-body-parts)
       (let [[part & remaining] remaining-asym-parts]
         (recur remaining
                (into final-body-parts
                      (loop [n 2 set-of-parts []]
-                       (println set-of-parts)
                        (if (> n 5)
                          set-of-parts
-                         (recur (inc n) (into set-of-parts (set [part (matching-part part n)]))))
+                         (recur (inc n)
+                                     (into set-of-parts (set [part (matching-part part n)]))))
                      )
                )
         )
